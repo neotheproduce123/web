@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AulaOrganizada - HabitNow Style</title>
+    <link rel="stylesheet" href="estilos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-mode">
+
+    <!-- LOGIN / REGISTRO -->
+    <div id="pantalla-registro" class="pantalla-login" style="display: none;">
+        <div class="tarjeta-login">
+            <div class="icono-app-login">✨</div>
+            <h1>HabitNow Experience</h1>
+            <p>Configura tu perfil para empezar a organizar tu rutina.</p>
+            <form id="formulario-usuario">
+                <div class="campo">
+                    <label>Nombre</label>
+                    <input type="text" id="nombre-usuario" placeholder="Ej: Angelo Santos" required>
+                </div>
+                <div class="campo">
+                    <label>Correo electrónico</label>
+                    <input type="email" id="correo-usuario" placeholder="correo@ejemplo.com" required>
+                </div>
+                <button type="submit" class="btn-principal">Comenzar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- APLICACIÓN PRINCIPAL -->
+    <div id="pantalla-app" class="contenedor-app">
+        
+        <!-- Header Principal -->
+        <header class="barra-superior">
+            <div class="header-info">
+                <h1 id="titulo-seccion">Hoy</h1>
+            </div>
+            <div class="perfil-contenedor">
+                <button id="btn-avatar" class="avatar-btn">
+                    <span id="avatar-inicial">A</span>
+                </button>
+                <div id="menu-perfil" class="menu-desplegable" style="display: none;">
+                    <div class="info-perfil-menu">
+                        <strong id="menu-nombre-usuario">Usuario</strong>
+                        <small id="menu-correo-usuario">correo@ejemplo.com</small>
+                    </div>
+                    <div class="separador"></div>
+                    <button id="btn-cambiar-usuario" class="item-menu">🔄 Cambiar de usuario</button>
+                    <button id="btn-borrar-cuenta" class="item-menu peligro">🗑️ Borrar cuenta y datos</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- VISTA 1: HOY -->
+        <section id="vista-hoy" class="vista-tab">
+            <div class="selector-fechas" id="contenedor-fechas"></div>
+            <div class="contenedor-lista" id="lista-hoy"></div>
+        </section>
+
+        <!-- VISTA 2: TRABAJOS Y TAREAS -->
+        <section id="vista-trabajos" class="vista-tab" style="display: none;">
+            <div class="seccion-titulo-caja">
+                <h2>Mis Trabajos y Tareas</h2>
+            </div>
+            <h3 class="subtitulo-seccion">Pendientes</h3>
+            <div class="contenedor-lista" id="lista-trabajos-pendientes"></div>
+            <h3 class="subtitulo-seccion">Completados</h3>
+            <div class="contenedor-lista" id="lista-trabajos-completados"></div>
+        </section>
+
+        <!-- VISTA 3: HÁBITOS DE ESTUDIO -->
+        <section id="vista-habitos" class="vista-tab" style="display: none;">
+            <div class="seccion-titulo-caja">
+                <h2>Hábitos de Estudio</h2>
+            </div>
+            <div class="contenedor-lista" id="lista-habitos-estudio"></div>
+        </section>
+
+        <!-- BOTÓN FLOTANTE (+) PARA CREAR -->
+        <button class="btn-fab" onclick="abrirModalCrear()">
+            <span>+</span>
+        </button>
+
+        <!-- BARRA DE NAVEGACIÓN INFERIOR (SUBMENÚ HABITNOW) -->
+        <nav class="sub-menu-inferior">
+            <button class="nav-item activo" onclick="cambiarTab('vista-hoy', this, 'Hoy')">
+                <span class="nav-icono">📅</span>
+                <span class="nav-texto">Hoy</span>
+            </button>
+            <button class="nav-item" onclick="cambiarTab('vista-trabajos', this, 'Trabajos')">
+                <span class="nav-icono">📝</span>
+                <span class="nav-texto">Trabajos</span>
+            </button>
+            <button class="nav-item" onclick="cambiarTab('vista-habitos', this, 'Hábitos')">
+                <span class="nav-icono">🧠</span>
+                <span class="nav-texto">Hábitos</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- MODAL UNIVERSAL DE CREACIÓN (TAREA O HÁBITO) -->
+    <div id="modal-crear" class="modal-fondo" style="display: none;">
+        <div class="modal-contenido">
+            <h3>✨ Nuevo Elemento</h3>
+            <form id="formulario-crear-general">
+                <div class="campo">
+                    <label>¿Qué deseas agregar?</label>
+                    <input type="text" id="input-nombre" placeholder="Ej: Leer 30 minutos / Práctica de Física" required>
+                </div>
+                <div class="campo">
+                    <label>Tipo de elemento</label>
+                    <select id="input-tipo" onchange="cambiarTipoElemento(this.value)">
+                        <option value="trabajo">📝 Tarea / Trabajo</option>
+                        <option value="habito">🧠 Hábito de Estudio (Diario)</option>
+                    </select>
+                </div>
+                <div class="campo" id="campo-fecha-contenedor">
+                    <label>Fecha límite / Entrega</label>
+                    <input type="date" id="input-fecha">
+                </div>
+                <div class="modal-acciones">
+                    <button type="button" onclick="cerrarModalCrear()" class="btn-secundario">Cancelar</button>
+                    <button type="submit" class="btn-principal">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE EDICIÓN -->
+    <div id="modal-editar" class="modal-fondo" style="display: none;">
+        <div class="modal-contenido">
+            <h3>✏️ Editar Elemento</h3>
+            <input type="text" id="edit-nombre" placeholder="Nombre">
+            <input type="date" id="edit-fecha">
+            <div class="modal-acciones">
+                <button onclick="cerrarModalEditar()" class="btn-secundario">Cancelar</button>
+                <button onclick="guardarEdicionModal()" class="btn-principal">Actualizar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
